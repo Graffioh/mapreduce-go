@@ -2,28 +2,24 @@ package main
 
 import (
 	"fmt"
-	"log"
-	"os"
 	"wc-mapreduce-go/kv"
 	"wc-mapreduce-go/mr"
+	"wc-mapreduce-go/worker"
 )
 
 func main() {
 	var intermediate []kv.KV
+	kva_res_chan := make(chan []kv.KV)
 
 	filenames := []string{"./input-file-1.txt", "./input-file-2.txt"}
 
 	for _, f := range filenames {
-		d, err := os.ReadFile(f)
-		if err != nil {
-			log.Fatal(err)
-		}
+		go worker.MapWorker(f, mr.Map, kva_res_chan)
+	}
 
-		fmt.Printf("File content:\n %v\n", string(d))
-
-		content := string(d)
-
-		intermediate = append(intermediate, mr.Map(f, content)...)
+	for range filenames {
+		kva_res := <-kva_res_chan
+		intermediate = append(intermediate, kva_res...)
 	}
 
 	kv.SortKVA(intermediate)
