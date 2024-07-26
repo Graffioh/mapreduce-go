@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"log"
 	"os"
-	"wc-mapreduce-seq-go/kv"
-	"wc-mapreduce-seq-go/mr"
+	"wc-mapreduce-go/kv"
+	"wc-mapreduce-go/mr"
 )
 
 func main() {

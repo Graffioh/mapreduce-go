@@ -1,3 +1,3 @@
-module wc-mapreduce-seq-go
+module wc-mapreduce-go
 
 go 1.22.3
