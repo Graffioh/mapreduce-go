@@ -9,18 +9,25 @@ import (
 )
 
 func main() {
-	filename := "./input-file.txt"
+	var intermediate []kv.KV
 
-	d, err := os.ReadFile(filename)
-	if err != nil {
-		log.Fatal(err)
+	filenames := []string{"./input-file-1.txt", "./input-file-2.txt"}
+
+	for _, f := range filenames {
+		d, err := os.ReadFile(f)
+		if err != nil {
+			log.Fatal(err)
+		}
+
+		fmt.Printf("File content:\n %v\n", string(d))
+
+		content := string(d)
+
+		intermediate = append(intermediate, mr.Map(f, content)...)
 	}
 
-	fmt.Printf("File content:\n %v\n", string(d))
+	kv.SortKVA(intermediate)
 
-	content := string(d)
-
-	intermediate := mr.Map(filename, content)
 	fmt.Printf("Intermediate: %v", intermediate)
 
 	prev := ""

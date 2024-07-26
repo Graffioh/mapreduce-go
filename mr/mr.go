@@ -3,7 +3,7 @@ package mr
 import (
 	"strconv"
 	"strings"
-	"wc-mapreduce-seq-go/kv"
+	"wc-mapreduce-go/kv"
 )
 
 // map(k1, v1) -> list(k2, v2)
@@ -14,8 +14,6 @@ func Map(filename string, content string) []kv.KV {
 	for _, w := range words {
 		kva = append(kva, kv.KV{Key: w, Value: "1"})
 	}
-
-	kv.SortKVA(kva)
 
 	return kva
 }
