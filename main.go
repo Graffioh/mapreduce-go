@@ -9,16 +9,20 @@ import (
 
 func main() {
 	var intermediate []kv.KV
-	kva_res_chan := make(chan []kv.KV)
+
+	map_res_chan := make(chan []kv.KV)
+	reduce_res_chan := make(chan []kv.KV)
 
 	filenames := []string{"./input-file-1.txt", "./input-file-2.txt"}
 
+	// Create map worker to generate intermediate
 	for _, f := range filenames {
-		go worker.MapWorker(f, mr.Map, kva_res_chan)
+		go worker.MapWorker(f, mr.Map, map_res_chan)
 	}
 
+	// Merge map worker intermediate
 	for range filenames {
-		kva_res := <-kva_res_chan
+		kva_res := <-map_res_chan
 		intermediate = append(intermediate, kva_res...)
 	}
 
@@ -26,29 +30,10 @@ func main() {
 
 	fmt.Printf("Intermediate: %v", intermediate)
 
-	prev := ""
-	var kva_result []kv.KV
+	// Reduce the intermediate
+	go worker.ReduceWorker(intermediate, mr.Reduce, reduce_res_chan)
 
-	for i, int := range intermediate {
-		j := i
-
-		for j < len(intermediate) && intermediate[j].Key == intermediate[i].Key {
-			j++
-		}
-
-		if int.Key != prev {
-			values := []string{}
-			for k := i; k < j; k++ {
-				values = append(values, intermediate[k].Value)
-			}
-
-			kv_reduced := kv.KV{Key: int.Key, Value: mr.Reduce(int.Key, values)}
-			kva_result = append(kva_result, kv_reduced)
-		}
-
-		prev = int.Key
-		i = j
-	}
+	kva_result := <-reduce_res_chan
 
 	fmt.Printf("\n\nFinal result: %v", kva_result)
 }
