@@ -1,2 +1,2 @@
 # mapreduce-go
-toy mapreduce implementation in go
+toy mapreduce wordcount implementation in go
