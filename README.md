@@ -1,2 +1,2 @@
-# mapreduce-go
+# wc-mapreduce-go
 toy mapreduce wordcount implementation in go
