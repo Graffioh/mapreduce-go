@@ -15,7 +15,7 @@ func main() {
 	map_res_chan := make(chan []kv.KV)
 	reduce_res_chan := make(chan []kv.KV)
 
-	filenames := []string{"./input-file-1.txt", "./input-file-2.txt"}
+	filenames := []string{"./input-file-split-1.txt", "./input-file-split-2.txt"}
 
 	// Create map worker to generate intermediate
 	for _, f := range filenames {
@@ -32,13 +32,14 @@ func main() {
 
 	fmt.Printf("Intermediate: %v", intermediate)
 
-	// Reduce the intermediate
+	// Reduce the intermediate via workers
 	go worker.ReduceWorker(intermediate, mr.Reduce, reduce_res_chan)
 
 	kva_result := <-reduce_res_chan
 
 	fmt.Printf("\n\nFinal result: %v", kva_result)
 
+	// Pour the result into an output file
 	d1 := []byte(fmt.Sprintf("%v\n", kva_result))
 	err := os.WriteFile("./output-file-1.txt", d1, 0644)
 	if err != nil {
